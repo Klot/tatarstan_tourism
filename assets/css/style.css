@@ -1,0 +1,253 @@
+.card-header {
+    font-size: small;
+    text-transform: uppercase;
+}
+
+.card-value {
+         font-size: xx-large;
+         font-weight: 100;
+}
+         
+.card-date {
+         font-size: small;
+         text-transform: capitalize;
+}
+         
+.card-delta {
+        font-size: small;
+        padding-left:5px;
+}
+
+.radio-group .form-check {
+  padding-left: 0;
+}
+
+.radio-group .btn-group > .form-check:not(:last-child) > .btn {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.radio-group .btn-group > .form-check:not(:first-child) > .btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: -1px;
+}
+
+.tat_card {
+    padding-top:5px;
+    color:white;
+    background-color: rgb(255, 255, 255, 0.1);
+    border-radius: 16px;
+}
+
+.dash-dropdown {
+    width:10rem;
+}
+
+.main-layout {
+    height:100vh;
+    width:100%;
+    background: linear-gradient(#011C51, #1D7AE0);
+
+}
+
+.header-layout {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    align-items: center;
+    justify-content: space-between;
+    background: rgb(0, 0, 0, 0);
+    margin-left:20px;
+    margin-right:20px;
+}
+
+@font-face {
+    font-family: "Geologica Thin";
+    src: url("fonts/Geologica-Thin.ttf") format("truetype");
+}
+
+*, html, body {
+    font-family: "Geologica Thin", system-ui;
+}
+
+.big-card-value-container {
+    display:flex; 
+    align-items: center;
+}
+
+.big-card-value {
+    font-size:xxx-large;
+}
+
+.medium-card-value {
+     font-size:xx-large;
+}
+
+.card-value-label {
+    font-size:large;
+    padding-left:1rem;
+}
+.card-delta-container {
+    display:flex;
+    padding-left:10px;
+}
+.card-describe {
+    opacity:0.7;
+}
+.card-delta {
+    opacity:0.7;
+}
+.inplace-col-container {
+    border-left: 0.1rem solid;
+    border-left-color: rgb(255 255 255 / 40%);
+    padding-left: 15px;
+}
+.people-postprogress-container {
+    display:grid;
+    grid-template-columns: 50% 50%; 
+    font-size: small;  
+}
+.tour-card-grid-container {
+    display:grid;
+    grid-template-columns: 46% 46%;
+    grid-column-gap: 4%;
+    padding-top:10px;
+}
+.tourfirm-progress-container {
+    display:grid;
+    grid-template-columns: 40% 40% 46px;
+    grid-column-gap: 10px;
+    white-space: break-spaces;
+    align-items: center;  
+    font-size: small; 
+    justify-items: flex-end;
+    height: 5vh;
+}
+.tour-label-progress {
+    text-align: right;
+}
+.progress {
+    background-color: rgb(233, 236, 239, 0.2);
+    width:100%;
+    height:6px;
+}
+.people-main-container {
+
+}
+.people-card-radio-container {
+    position: relative;
+}
+.mantine-SegmentedControl-root {
+    background-color: rgb(241, 243, 245, 0.7);
+} 
+.avg-days-plot {
+    margin-top:2vh;
+    height:11vh;
+
+}
+.people-plot { 
+    height:7vh;
+}
+.profit-inplace-plot {
+    height:14vh;
+}
+.count-inplace-plot {
+    height:14vh;
+}
+.count-nights-inplace-plot {
+    height:14vh;
+}
+.bottom-container {
+    height:100%;
+
+}
+.bottom-table-container {
+    height:99%;
+
+}
+.bottom-figs-container {
+    height:100%;
+}
+.bottom-last-container {
+    height:100%;
+}
+.ag-header-group-text {
+    white-space:normal!important;
+}
+.ag-theme-balham-dark {
+    --ag-background-color: #fff0!important;
+    --ag-header-background-color: #f5f7f700!important;
+    --ag-border-color: #bdc3c700!important;
+    --ag-odd-row-background-color: #fdfdfd00!important;
+    --ag-row-hover-color: #0dcaf02e!important;
+    --ag-foreground-color: #fff!important;
+    
+}
+.ag-filter *{
+   background-color: #fff!important;
+   header-background-color: #f5f7f7!important;
+   border-color: #bdc3c7!important;
+   color: black !important;
+}
+.ag-select-list {
+    background-color: #fff!important;
+    color:#444!important;
+}
+
+.ag-header-group-text {
+    color: #fff;
+}
+
+.voice-by-cluster-plot {
+    height:24vh;
+}
+.voice-by-tone-plot{
+    height:15vh;
+    border-bottom: 0.1rem solid;
+    border-top: 0.1rem solid;
+    border-color: rgb(255 255 255 / 40%);
+    padding-top: 15px;   
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+}
+.emoji-by-tone-plot{
+    height:12vh;
+}
+.emoji-tone-container {
+    padding-top:1vh;
+    display:grid;
+    grid-template-columns:49% 49%;
+    height:8vh;
+}
+#wordcloud {
+    height:25vh;
+}
+.voice-text-table-container{
+    height:35vh;
+}
+.header-wordcloud-radio-container{
+    justify-content: flex-end;
+    display: flex;
+    align-items: center;
+    height:4vh;
+}
+#negative-emoji-container {
+    padding-left: 25px;
+}
+#positive-emoji-stuck {
+    border-right: 0.1rem solid;
+    border-right-color: rgb(255 255 255 / 40%);
+    padding-right: 25px;
+}
+.header-emoji-radio-container {
+    display:flex;
+    justify-content: space-between;
+}
+.mantine-SegmentedControl-controlActive {
+    background-color: #fff;
+}
+.famous-cluster-select-container {
+    padding-right:30px;
+}
