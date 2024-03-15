@@ -23,7 +23,7 @@ russian_stopwords.extend(newStopWords)
 #import pickle
 
 try:
-    app = dash.Dash(name='Tatarstan', assets_folder='assets', external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP])     
+    app = dash.Dash(name='Tatarstan', title='Туризм в Татарстане', assets_folder='assets', external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP])     
     tat_pivot = pd.read_excel(r'assets/data/Татарстан_статистика.xlsx')
     df_tat = pd.read_excel(r'assets/data/df_tatarstan_cluster_sw.xlsx')
     cluster_describe = pd.read_excel(r'assets/data/clusters_describe_sw.xlsx')
@@ -51,13 +51,9 @@ cluster_pivot = cluster_pivot.join(df_tat.pivot_table(index=['Num_Cluster', 'Г�
                                    .rename(columns={'Negative':'Негативные эмодзи','Neutral':'Нейтральные эмодзи','Positive':'Позитивные эмодзи'}))
 cluster_pivot = cluster_pivot.reset_index()
 cluster_pivot = cluster_pivot.merge(cluster_describe, on='Num_Cluster')
-
 emoji_pivot = df_tat.pivot_table(index=['Num_Cluster', 'Год_месяц', 'Достопримечательность'], 
                             values=['Emoji_tone_pos','Emoji_tone_neg','Emoji_count_posivive','Emoji_count_negative'], 
                             aggfunc='sum', dropna=True).reset_index()
-
-
-
     
 def unem(columns):
     em = columns[0]
@@ -69,21 +65,17 @@ def unem(columns):
 
 emoji_pivot['Emoji_unique_pos'] = emoji_pivot[['Emoji_tone_pos']].apply(unem, axis=1)
 emoji_pivot['Emoji_unique_neg'] = emoji_pivot[['Emoji_tone_neg']].apply(unem, axis=1)
-
 table_tone = (df_tat[((df_tat['Тональность'] == 'positive') | 
                       (df_tat['Тональность'] == 'negative')) & 
                      (df_tat['Emoji_tone'] != 'Spam')]
               [['Тест','Тональность','Emoji','Emoji_tone','Год_месяц', 'Num_Cluster','Тема']].reset_index())
-
 table_tone_neutral = (df_tat[((df_tat['Тональность'] == 'neutral')) & 
                      (df_tat['Emoji_tone'] != 'Spam')]
               [['Тест','Тональность','Emoji','Emoji_tone','Год_месяц', 'Num_Cluster','Тема']].reset_index())
-
 date_filter_data=[{'value':val, 'label':val} for val in sorted(df_tat['Год_месяц'].unique(), reverse=True)]
 cluster_filter_data=[{'value':val, 'label':val} for val in cluster_describe['Num_Cluster'].unique()]
 tone_filter_data=[{'value':val, 'label':val} for val in table_tone['Тональность'].unique()]
 theme_filter_data=[{'value':val, 'label':val} for val in sorted(themes_count['Тема'].unique())]
-
 
 #-----------------------------------------------------------------------------#
 #---------------------------------CALLBACKS-----------------------------------#
@@ -111,15 +103,13 @@ def avg_days_fig_update(date_start, date_end):
     else: 
         simbol = '-'
         delta_icon = 'feather:arrow-down-left'
-        delta_icon_color = 'red'
-    
+        delta_icon_color = 'red'    
     if dates[date_now_ind] == dates[0]:
         position = 'middle right'
     elif dates[date_now_ind] == dates[-1]:
         position = 'bottom center'
     else:
-        position = 'bottom center'
-        
+        position = 'bottom center'        
     if dates[date_ind] == dates[0]:
         position_old = 'middle right'
     elif dates[date_ind] == dates[-1]:
@@ -146,10 +136,6 @@ def avg_days_fig_update(date_start, date_end):
         dragmode=False,
         autosize=True)
     fig.update_yaxes(
-        # range=[tat_pivot['Средняя продолжительность пребывания граждан в коллективных средствах размещения'].min()+
-        #        tat_pivot['Средняя продолжительность пребывания граждан в коллективных средствах размещения'].min()*0.1,
-        #        tat_pivot['Средняя продолжительность пребывания граждан в коллективных средствах размещения'].max()+
-        #        tat_pivot['Средняя продолжительность пребывания граждан в коллективных средствах размещения'].max()*0.05],
         showgrid=False, 
         visible=False,)
     fig.update_xaxes(showgrid=False, visible=False,)
@@ -192,7 +178,6 @@ def avg_days_fig_update(date_start, date_end):
     Output('delta-avg-people','children'),
     Input('date_start_dropdown','value'),
     Input('date_end_dropdown','value')
-
     )
 def people_fig_update(date_start, date_end):
     date_ind = dates.index(date_start)
@@ -206,10 +191,8 @@ def people_fig_update(date_start, date_end):
     val_total_prev  = val_rf_prev + val_fgn_prev
     
     perc_rf_now = val_rf_now / val_total_now * 100
-    perc_frg_now = val_fgn_now / val_total_now * 100
-    
-    people_progress = int(perc_frg_now)
-    
+    perc_frg_now = val_fgn_now / val_total_now * 100    
+    people_progress = int(perc_frg_now)    
     delta = abs((val_total_now / val_total_prev - 1)*100).round(2) if (val_total_prev < val_total_now) else abs((1 - (val_total_now / val_total_prev)) * 100).round(2)
     delta_val = abs(val_total_now - val_total_prev)
     if val_total_prev < val_total_now:
@@ -219,8 +202,7 @@ def people_fig_update(date_start, date_end):
     else: 
         simbol = '-'
         delta_icon = 'feather:arrow-down-left'
-        delta_icon_color = 'red'
-    
+        delta_icon_color = 'red'    
     if dates[date_ind] == dates[0]:
         position_old = 'top center'
     elif dates[date_ind] == dates[-1]:
@@ -232,8 +214,7 @@ def people_fig_update(date_start, date_end):
     elif dates[date_ind] == dates[4]:
         position_old = 'top center'
     else:
-        position_old = 'bottom center'
-    
+        position_old = 'bottom center'    
     if dates[date_ind_now] == dates[0]:
         position = 'top center'
     elif dates[date_ind_now] == dates[-1]:
@@ -474,8 +455,7 @@ def inplace_card_update(date_start, date_end):
     Input('date_start_dropdown','value'),
     Input('date_end_dropdown','value')
     )
-def tourfirms_card_update(date_start, date_end):
-    
+def tourfirms_card_update(date_start, date_end):    
     tour_now = tat_pivot[tat_pivot['Год'] == date_end]['Турагентская'].iloc[0]
     oper_now = tat_pivot[tat_pivot['Год'] == date_end]['Туроператорская'].iloc[0]
     touroper_now = tat_pivot[tat_pivot['Год'] == date_end]['Туроператорская и турагентская'].iloc[0]
@@ -523,15 +503,12 @@ def tourfirms_card_update(date_start, date_end):
         delta_icon_color_tours = 'red'
         
     return (firm_all_now, delta_icon_firm, delta_icon_color_firm, 
-            f'{delta_firm_val:.0f} ({delta_firm:.0f}%) к {date_start}',
-            
+            f'{delta_firm_val:.0f} ({delta_firm:.0f}%) к {date_start}',            
             tour_perc_now, f'{tour_now} единиц', 
             oper_perc_now, f'{oper_now} единиц',
-            touroper_perc_now, f'{touroper_now} единиц',
-            
+            touroper_perc_now, f'{touroper_now} единиц',            
             f'{tours_all_now/1000:.1f}', delta_icon_tours, delta_icon_color_tours, 
-            f'{delta_tours_val:.1f} ({delta_tours:.0f}%) к {date_start}',
-            
+            f'{delta_tours_val:.1f} ({delta_tours:.0f}%) к {date_start}',            
             rfrf_perc_now, f'{rfrf_now/1000:.1f} тыс шт.', 
             rfother_perc_now, f'{rfother_now/1000:.1f} тыс шт.', 
             otherrf_perc_now, f'{otherrf_past} штук')
@@ -743,14 +720,13 @@ def clust_polt_update(date_end, type_graph, famous_type, cluster, tone, date_fil
                     yanchor="bottom",
                     y=1.02,
                     xanchor="right",
-                    x=1,
-                    
-                ))
+                    x=1,                    
+                )
+        )
         for i in cluster_describe['Num_Cluster']:
             fig.data[int(i)].name = str(i)    
         fig.update_yaxes(showgrid=False, visible=False)
-        fig.update_xaxes(showgrid=False, visible=True)
-    
+        fig.update_xaxes(showgrid=False, visible=True)    
         fig.update_annotations(opacity=0)
     else:   
         themes_count_temp = themes_count
@@ -759,10 +735,9 @@ def clust_polt_update(date_end, type_graph, famous_type, cluster, tone, date_fil
         if tone:
             themes_count_temp = themes_count_temp[themes_count_temp['Тональность'].isin(tone)]
         top10 = themes_count_temp.pivot_table(values='Кол-во', index = ['Тема'], aggfunc='sum').reset_index().sort_values('Кол-во', ascending=False)[:10]['Тема']
-        cluster_pivot_temp =  themes_count_temp[themes_count_temp['Тема'].isin(top10)].pivot_table(values='Кол-во', index = ['Тема','Год_месяц'], aggfunc='sum').reset_index().sort_values('Кол-во', ascending=False)
-
-        #color_list = ['#fff','#97B2DE','#656668','#35A792','#B4D4BF','#A9A9A9',
-        #'#D5D5D5','#DB3E4D','#E36E7C','#FADEA1','#BEA096','#99FF99','#FF99CC']
+        cluster_pivot_temp =  (themes_count_temp[themes_count_temp['Тема'].isin(top10)]
+                               .pivot_table(values='Кол-во', index = ['Тема','Год_месяц'], aggfunc='sum')
+                                   .reset_index().sort_values('Кол-во', ascending=False))
         for th in top10:    
             fig.add_trace(
                     go.Scatter(
@@ -801,6 +776,7 @@ def clust_polt_update(date_end, type_graph, famous_type, cluster, tone, date_fil
         fig.update_annotations(opacity=0)
         header='По тематике'
     return fig, header
+
 
 @app.callback(
     Output('voice-by-tone-plot', 'figure'),    
@@ -882,7 +858,8 @@ def tone_plot_update(cluster, tone, famous,date_filter,theme):
                     y=1.02,
                     xanchor="right",
                     x=0.9
-                ))
+                )
+        )
         fig.update_annotations(opacity=0)
     else:         
         df_tat_temp = df_tat[df_tat['Тональность'].isin(['positive','negative'])]
@@ -935,8 +912,7 @@ def tone_plot_update(cluster, tone, famous,date_filter,theme):
                     #line=dict(color=color, width=3),
                     #hoverinfo='skip',                
                     )
-                )
-        
+                )        
         if len(tone)==1:
             if tone[0] == 'negative': 
                 neg1()
@@ -972,10 +948,8 @@ def tone_plot_update(cluster, tone, famous,date_filter,theme):
                     y=1.02,
                     xanchor="right",
                     x=0.9
-                ))
-
-
-            
+                )
+        )            
     return fig
 
 @app.callback(
@@ -1044,8 +1018,6 @@ def emoji_plot_update(cluster, tone, theme, famous):
                 #hoverinfo='skip',
                 )
             )
-    
-
     if len(tone)==1:
         if tone[0] == 'negative': 
             neg()
@@ -1078,13 +1050,12 @@ def emoji_plot_update(cluster, tone, theme, famous):
             y=1.02,
             xanchor="right",
             x=0.9
-            ))
-      
+            )
+    )      
     fig.update_yaxes(
         showgrid=False, 
         visible=False,)
     fig.update_xaxes(showgrid=False, visible=True,)
-
     fig.update_annotations(opacity=0)
     return fig
 
@@ -1101,15 +1072,12 @@ def emoji_plot_update(cluster, tone, theme, famous):
     )
 def emoji_list_update(cluster,theme,date, famous):
     emoji_pivot_temp = emoji_pivot
-
     if cluster:
         emoji_pivot_temp = emoji_pivot_temp[emoji_pivot_temp['Num_Cluster'].isin(cluster)]
     if theme:
         emoji_pivot_temp = emoji_pivot_temp[emoji_pivot_temp['Достопримечательность'].isin(theme)]
     if date:
         emoji_pivot_temp = emoji_pivot_temp[emoji_pivot_temp['Год_месяц'].isin(date)]
-    # if theme:
-    #     emoji_pivot_temp = emoji_pivot_temp[emoji_pivot_temp['Num_Cluster'].isin(cluster)]
     pos_count = emoji_pivot_temp['Emoji_count_posivive'].sum()
     neg_count = emoji_pivot_temp['Emoji_count_negative'].sum()
     pos_list = "".join(set(str(emoji_pivot_temp[['Emoji_tone_pos']]
@@ -1135,8 +1103,7 @@ def emoji_list_update(cluster,theme,date, famous):
     Input('filter-theme','value'),
     Input('famous_type_radio','value'),
     )
-def wordcloud_update(date_filter, cluster, tone, theme, famous):
-    
+def wordcloud_update(date_filter, cluster, tone, theme, famous):    
     if famous == 'famous':
         themes_count_temp = themes_count
         if cluster:
@@ -1191,8 +1158,7 @@ def wordcloud_update(date_filter, cluster, tone, theme, famous):
         autosize=True)
     fig.update_traces(hovertemplate=None, hoverinfo='skip') 
     fig.update_yaxes(showgrid=False, visible=False)
-    fig.update_xaxes(showgrid=False, visible=False)
-        
+    fig.update_xaxes(showgrid=False, visible=False)        
     return fig
 
 
@@ -1221,6 +1187,7 @@ def voice_table_update(cluster, tone, theme, date_filter):
     if len(table) == 0:
         table = table_neutral
     return table.to_dict('records') 
+
 
 @app.callback(
     Output('cluster_type_radio-container','style'),
@@ -1608,8 +1575,7 @@ children = [
                className='tat_card',
                style={'height':'65vh', 'width': '100%', 
                       },
-            ),span=4),
-                        
+            ),span=4),                        
         dmc.Col(
                 dmc.Card(
                         children=[
@@ -1671,8 +1637,7 @@ children = [
                        className='tat_card',
                        style={'height':'65vh', 'width': '100%', 
                               },
-                    ),span=4),
-        
+                    ),span=4),        
         dmc.Col(               
             dmc.Card(
                 children=[
@@ -1792,10 +1757,8 @@ children = [
                          },
                 ),span=4),                        
         ],className='bottom-container'), 
-    ], style={'padding-left':'20px','padding-right':'20px'}),
-    
-],)
-
+    ], style={'padding-left':'20px','padding-right':'20px'}),    
+])
 #----------------------------END OF THE LAYOUT--------------------------------#
 #-----------------------------------------------------------------------------#
 
