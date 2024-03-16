@@ -576,16 +576,17 @@ def pie_upadte(result_style, theme, cluster, date):
     neu_perc = (neu_val / total) * 100
     neg_val = df_pivot[df_pivot['Тональность']=='negative']['Тест'].sum()
     neg_perc = (neg_val / total) * 100
+    result_indicator = neg_val / (pos_val + neg_val) * 100
     
-    if neg_perc <15:  
-        result = 'Оценка отношения: Положительное отношение туристов'
+    if result_indicator <15:  
+        result = 'Оценка: Положительное отношение туристов'
         result_style['color'] = 'white'
-    elif (neg_perc >=15) and (neg_perc<50): 
-        result = 'Оценка отношения: Значительная доля негативных отзывов, возможны зоны роста'
+    elif (result_indicator >=15) and (result_indicator<50): 
+        result = 'Оценка: Значительная доля негативных отзывов, возможны зоны роста'
         result_style['color'] = 'yellow'
     else:
-        result = 'Оценка отношения: Критическая доля негативных отзывов, существуют проблемы, которые необходимо оперативно решать'
-        result_style['color'] = 'red'
+        result = 'Оценка: Критическая доля негативных отзывов, существуют проблемы, которые необходимо оперативно решать'
+        result_style['color'] = 'rgb(255, 99, 71)'
 
     fig = px.pie(df_pivot, 
                  values='Тест',
