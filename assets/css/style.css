@@ -163,8 +163,7 @@
 
 }
 .bottom-table-container {
-    height:99%;
-
+    height:47vh;
 }
 .bottom-figs-container {
     height:100%;
@@ -250,4 +249,27 @@
 }
 .famous-cluster-select-container {
     padding-right:30px;
+}
+.pie-container {
+    display:grid;
+    grid-template-columns: 40% 60%;
+    height:14vh;
+}
+.pie-label-container {
+    display:grid;
+    grid-template-columns: 5% 25% 35% 20%;
+    grid-template-row: auto auto auto auto;
+    align-content: center;
+    align-items: center;
+    justify-items: end;
+    row-gap: 10px;
+    column-gap: 10px;
+}
+.dash-devider {
+    opacity:40%;
+    padding-bottom:10px;
+}
+#pie-analytic-result {
+    display: flex;
+    padding-left:38%;
 }
