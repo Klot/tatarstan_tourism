@@ -227,7 +227,7 @@
     height:35vh;
 }
 .header-wordcloud-radio-container{
-    justify-content: flex-end;
+    justify-content: space-between;
     display: flex;
     align-items: center;
     height:4vh;
@@ -271,5 +271,9 @@
 }
 #pie-analytic-result {
     display: flex;
-    padding-left:38%;
+    padding-top: 5px;
+}
+.wordcloud-filter-bot-container {
+    display:flex;
+    align-items: center;
 }
