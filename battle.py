@@ -548,11 +548,14 @@ def tourfirms_card_update(date_start, date_end):
     Output('pie-negative-value','children'),
     Output('pie-negative-perc','children'),
     
+    Output('pie-analytic-result', 'children'),
+    Output('pie-analytic-result', 'style'),
+    Input('pie-analytic-result', 'style'),
     Input('filter-theme','value'),
     Input('filter-cluster','value'),
     Input('filter-date','value'),
     )
-def pie_upadte(theme, cluster, date):    
+def pie_upadte(result_style, theme, cluster, date):    
     fig = go.Figure()
     df_tat_temp = df_tat
     if theme:
@@ -573,7 +576,17 @@ def pie_upadte(theme, cluster, date):
     neu_perc = (neu_val / total) * 100
     neg_val = df_pivot[df_pivot['Тональность']=='negative']['Тест'].sum()
     neg_perc = (neg_val / total) * 100
-        
+    
+    if neg_perc <15:  
+        result = 'Оценка отношения: Положительное отношение туристов'
+        result_style['color'] = 'white'
+    elif (neg_perc >=15) and (neg_perc<50): 
+        result = 'Оценка отношения: Значительная доля негативных отзывов, возможны зоны роста'
+        result_style['color'] = 'yellow'
+    else:
+        result = 'Оценка отношения: Критическая доля негативных отзывов, существуют проблемы, которые необходимо оперативно решать'
+        result_style['color'] = 'red'
+
     fig = px.pie(df_pivot, 
                  values='Тест',
                  names='Тональность', 
@@ -604,7 +617,8 @@ def pie_upadte(theme, cluster, date):
     return (fig, 
             pos_val, f'{pos_perc:.1f} %', 
             neu_val, f'{neu_perc:.1f} %', 
-            neg_val, f'{neg_perc:.1f} %')
+            neg_val, f'{neg_perc:.1f} %',
+            result, result_style)
 
 
 @app.callback(
@@ -731,7 +745,7 @@ def clusters_pivot_table_update(famous, themes,cluster, date_filter):
     Input('filter-theme','value'),
     )
 def clust_polt_update(date_end, type_graph, famous_type, cluster, tone, date_filter, theme):    
-    header='По кластерам'
+    header='Кластер | Анализ динамики упоминаний'
     fig = go.Figure()
 
     if type_graph == 'all' and famous_type == 'cluster':  
@@ -869,7 +883,7 @@ def clust_polt_update(date_end, type_graph, famous_type, cluster, tone, date_fil
                 font = dict(size = 10, color='white')
                 ))
         fig.update_annotations(opacity=0)
-        header='По тематике'
+        header='Тема | Анализ динамики упоминаний'
     return fig, header
 
 @app.callback(
@@ -1108,7 +1122,7 @@ def emoji_plot_update(cluster, tone, theme, famous):
             go.Scatter(
                 x=cluster_pivot_temp['Год_месяц'],
                 y=cluster_pivot_temp[xy],
-                fill='tonexty',
+                fill='tozeroy',
                 line_shape='spline',
                 line=dict(color='#fff', width=3),
                 #hoverinfo='skip',
@@ -1295,17 +1309,20 @@ def voice_table_update(cluster, tone, theme, date_filter):
 @app.callback(
     Output('cluster_type_radio-container','style'),
     Output('header-cluster-pivot-table','children'),
+    Output('detail-card-header','children'),
     Input('famous_type_radio','value'),
     Input('cluster_type_radio-container','style'),
     )
 def cluster_selector_hide(famous, style):    
     if famous =='famous':
         style['display'] = 'none' 
-        header = 'По тематике'
+        header = 'Тема | Верхнеуровневый анализ показателей'
+        header_detail = 'Тема | Детальный анализ'
     else: 
         style['display'] = 'block'
-        header = 'По кластерам'
-    return style, header
+        header = 'Кластер | Верхнеуровневый анализ показателей'
+        header_detail = 'Кластер | Детальный анализ'
+    return style, header, header_detail
 
 
 @app.callback(
@@ -1667,20 +1684,22 @@ children = [
                                         html.Div(['']),
                                         html.Div(['Кол-во отзывов, шт.']),
                                         html.Div(['% от всех']),
-                                        DashIconify(icon="feather:circle", color='rgb(144, 238, 144)'),
+                                        DashIconify(icon="bi:circle-fill", color='rgb(144, 238, 144)'),
                                         html.Div(['Позитивные']),
                                         html.Div([], id='pie-positive-value'),
                                         html.Div([], id='pie-positive-perc'),
-                                        DashIconify(icon="feather:circle", color='rgb(220, 220, 220)'),
+                                        DashIconify(icon="bi:circle-fill", color='rgb(220, 220, 220)'),
                                         html.Div(['Нейтральные']),
                                         html.Div([], id='pie-neutral-value'),
                                         html.Div([], id='pie-neutral-perc'),
-                                        DashIconify(icon="feather:circle", color='rgb(255, 99, 71)'),
+                                        DashIconify(icon="bi:circle-fill", color='rgb(255, 99, 71)'),
                                         html.Div(['Негативные']),
                                         html.Div([], id='pie-negative-value'),
                                         html.Div([], id='pie-negative-perc'),
                                         ], className='pie-label-container'),
-                                    html.Div(['Вывод: '], id='pie-analytic-result'),
+                                    html.Div(['Вывод: '], 
+                                             id='pie-analytic-result',
+                                             style={'display':'block'}),
                                 ]),
                             ],className='pie-container'),
 
@@ -1714,7 +1733,7 @@ children = [
                 dmc.Card(
                         children=[
                             html.Div([                                
-                                dmc.Text("Отзывов по кластерам", weight=500, id='header-voices'),
+                                dmc.Text("", weight=500, id='header-voices'),
                                 html.Div([
                                     dmc.SegmentedControl(
                                             id="cluster_type_radio",
@@ -1777,73 +1796,75 @@ children = [
             dmc.Card(
                 children=[
                     html.Div([
-                        dmc.Text("", weight=500),
+                        dmc.Text("", weight=500, id='detail-card-header'),
                         html.Div([
-                            dmc.SegmentedControl(
-                                    id="famous_type_radio",
-                                    value='cluster',
-                                    data=[
-                                        {"value": 'cluster', "label": "Кластер"},
-                                        {"value": 'famous', "label": "Тема"},
-                                    ],
-                                    radius=20,
-                                    size='xs',
-                                    className='emoji-radio'
-                                ),
-                            ], className='famous-cluster-select-container'),
-                        dmc.Menu(
-                                [
-                                    dmc.MenuTarget(dmc.Button("Фильтры", 
-                                                              leftIcon=DashIconify(icon="feather:filter"),
-                                                              variant="light",
-                                                              color='blue',
-                                                              radius='xl')),
-                                    dmc.MenuDropdown(
-                                        [   
-                                            dmc.MenuLabel("Дата"),
-                                            dmc.MultiSelect(
-                                                id='filter-date',
-                                                data=[{'value':val, 'label':val} for val in sorted(df_tat['Год_месяц'].unique(), reverse=True)],
-                                                value='',
-                                                clearable=True,
-                                                style={"width": 160},
-                                            ),
-                                            dmc.MenuDivider(), 
-                                            dmc.MenuLabel("Кластер"),
-                                            dmc.MultiSelect(
-                                                id='filter-cluster',
-                                                data=[{'value':val, 'label':val} for val in cluster_describe['Num_Cluster'].unique()],
-                                                value='',
-                                                clearable=True,
-                                                style={"width": 160},
-                                            ),
-                                            dmc.MenuDivider(), 
-                                            dmc.MenuLabel("Тональность отзыва"),
-                                            dmc.MultiSelect(
-                                                id='filter-tone',
-                                                data=[{'value':val, 'label':val} for val in table_tone['Тональность'].unique()],
-                                                value='',
-                                                clearable=True,
-                                                style={"width": 160},
-                                            ),
-                                            dmc.MenuDivider(), 
-                                            dmc.MenuLabel("Тематика"),
-                                            dmc.MultiSelect(
-                                                id='filter-theme',
-                                                data=[{'value':val, 'label':val} for val in sorted(themes_count['Тема'].unique())],
-                                                value='',
-                                                clearable=True,
-                                                searchable=True,
-                                                nothingFound="No options found",
-                                                style={"width": 160},
-                                            )
-                                        ]
+                            html.Div([
+                                dmc.SegmentedControl(
+                                        id="famous_type_radio",
+                                        value='cluster',
+                                        data=[
+                                            {"value": 'cluster', "label": "Кластер"},
+                                            {"value": 'famous', "label": "Тема"},
+                                        ],
+                                        radius=20,
+                                        size='xs',
+                                        className='emoji-radio'
                                     ),
-                                ],
-                                position ='left',
-                                transition='slide-left',
-                                transitionDuration=150,
-                            ) 
+                                ], className='famous-cluster-select-container'),
+                            dmc.Menu(
+                                    [
+                                        dmc.MenuTarget(dmc.Button("Фильтры", 
+                                                                  leftIcon=DashIconify(icon="feather:filter"),
+                                                                  variant="light",
+                                                                  color='blue',
+                                                                  radius='xl')),
+                                        dmc.MenuDropdown(
+                                            [   
+                                                dmc.MenuLabel("Дата"),
+                                                dmc.MultiSelect(
+                                                    id='filter-date',
+                                                    data=[{'value':val, 'label':val} for val in sorted(df_tat['Год_месяц'].unique(), reverse=True)],
+                                                    value='',
+                                                    clearable=True,
+                                                    style={"width": 160},
+                                                ),
+                                                dmc.MenuDivider(), 
+                                                dmc.MenuLabel("Кластер"),
+                                                dmc.MultiSelect(
+                                                    id='filter-cluster',
+                                                    data=[{'value':val, 'label':val} for val in cluster_describe['Num_Cluster'].unique()],
+                                                    value='',
+                                                    clearable=True,
+                                                    style={"width": 160},
+                                                ),
+                                                dmc.MenuDivider(), 
+                                                dmc.MenuLabel("Тональность отзыва"),
+                                                dmc.MultiSelect(
+                                                    id='filter-tone',
+                                                    data=[{'value':val, 'label':val} for val in table_tone['Тональность'].unique()],
+                                                    value='',
+                                                    clearable=True,
+                                                    style={"width": 160},
+                                                ),
+                                                dmc.MenuDivider(), 
+                                                dmc.MenuLabel("Тематика"),
+                                                dmc.MultiSelect(
+                                                    id='filter-theme',
+                                                    data=[{'value':val, 'label':val} for val in sorted(themes_count['Тема'].unique())],
+                                                    value='',
+                                                    clearable=True,
+                                                    searchable=True,
+                                                    nothingFound="No options found",
+                                                    style={"width": 160},
+                                                )
+                                            ]
+                                        ),
+                                    ],
+                                    position ='left',
+                                    transition='slide-left',
+                                    transitionDuration=150,
+                                )
+                            ],className='wordcloud-filter-bot-container'),
                     ], className='header-wordcloud-radio-container'),
                     html.Div([
                         html.Div([
