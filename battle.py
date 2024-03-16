@@ -1796,7 +1796,9 @@ children = [
             dmc.Card(
                 children=[
                     html.Div([
-                        dmc.Text("", weight=500, id='detail-card-header'),
+                        dmc.Text("", weight=500, 
+                                 id='detail-card-header',
+                                 style={'margin-bottom':'2vh'}),
                         html.Div([
                             html.Div([
                                 dmc.SegmentedControl(
