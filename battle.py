@@ -157,7 +157,7 @@ def avg_days_fig_update(date_start, date_end):
         x = [fig.data[0].x[date_ind]],
         y = [fig.data[0].y[date_ind]],
         mode='markers + text',
-        text = f'{fig.data[0].y[date_ind]:.2f} дн',
+        text = f'{fig.data[0].y[date_ind]:.2f} дн<br>{date_start}',
         textfont = {'color':'#c7c7c7'},
         marker = {'color':'#c7c7c7', 'size':14},
         showlegend=False,
@@ -168,7 +168,7 @@ def avg_days_fig_update(date_start, date_end):
         x = [fig.data[0].x[date_now_ind]],
         y = [fig.data[0].y[date_now_ind]],
         mode='markers + text',
-        text = f'{fig.data[0].y[date_now_ind]:.2f} дн',
+        text = f'{fig.data[0].y[date_now_ind]:.2f} дн<br>{date_end}',
         textfont = {'color':'#fff'},
         marker = {'color':'#fff', 'size':14},
         showlegend=False,
@@ -276,7 +276,7 @@ def people_fig_update(date_start, date_end):
         x = [fig.data[0].x[date_ind]],
         y = [fig.data[0].y[date_ind]],
         mode='markers + text',
-        text = f'{(fig.data[0].y[date_ind]/1000000):.2f} млн',
+        text = f'{(fig.data[0].y[date_ind]/1000000):.2f} млн<br>{date_start}',
         textfont = {'color':'#c7c7c7'},
         marker = {'color':'#c7c7c7', 'size':14},
         showlegend=False,
@@ -287,7 +287,7 @@ def people_fig_update(date_start, date_end):
         x = [fig.data[0].x[date_ind_now]],
         y = [fig.data[0].y[date_ind_now]],
         mode='markers + text',
-        text = f'{(fig.data[0].y[date_ind_now]/1000000):.2f} млн',
+        text = f'{(fig.data[0].y[date_ind_now]/1000000):.2f} млн<br>{date_end}',
         textfont = {'color':'#fff'},
         marker = {'color':'#fff', 'size':14},
         showlegend=False,
@@ -409,8 +409,8 @@ def inplace_card_update(date_start, date_end):
             showgrid=False, 
             visible=False,)
         fig.update_xaxes(showgrid=False, visible=False,)
-        text_temp_past = f'{(fig.data[0].y[date_ind]):.0f} ед' if i == 'Число коллективных средств размещения' else f'{(fig.data[0].y[date_ind]/1000000):.2f} млн'
-        text_temp_now = f'{(fig.data[0].y[date_ind_now]):.0f} ед' if i == 'Число коллективных средств размещения' else f'{(fig.data[0].y[date_ind_now]/1000000):.2f} млн'
+        text_temp_past = f'{(fig.data[0].y[date_ind]):.0f} ед<br>{date_start}' if i == 'Число коллективных средств размещения' else f'{(fig.data[0].y[date_ind]/1000000):.2f} млн<br>{date_start}'
+        text_temp_now = f'{(fig.data[0].y[date_ind_now]):.0f} ед<br>{date_end}' if i == 'Число коллективных средств размещения' else f'{(fig.data[0].y[date_ind_now]/1000000):.2f} млн<br>{date_end}'
         fig.add_scatter(
             x = [fig.data[0].x[date_ind]],
             y = [fig.data[0].y[date_ind]],
@@ -1672,7 +1672,8 @@ children = [
         dmc.Col(
             dmc.Card(
                 children=[ 
-                    dmc.Text("", weight=500, id='header-cluster-pivot-table'),  
+                    dmc.Text("", weight=500, 
+                             id='header-cluster-pivot-table'),  
                         html.Div([
                             html.Div([
                                 dcc.Graph(id='most-famous-pie-in-the-world',
@@ -1797,9 +1798,7 @@ children = [
             dmc.Card(
                 children=[
                     html.Div([
-                        dmc.Text("", weight=500, 
-                                 id='detail-card-header',
-                                 style={'margin-bottom':'2vh'}),
+                        dmc.Text("", weight=500, id='detail-card-header'),
                         html.Div([
                             html.Div([
                                 dmc.SegmentedControl(
