@@ -107,7 +107,7 @@ def avg_days_fig_update(date_start, date_end):
     if val_prev < val_now:
         simbol = '+'
         delta_icon = 'feather:arrow-up-right'
-        delta_icon_color = 'green'
+        delta_icon_color = '00C715'
     else: 
         simbol = '-'
         delta_icon = 'feather:arrow-down-left'
@@ -218,7 +218,7 @@ def people_fig_update(date_start, date_end):
     if val_total_prev < val_total_now:
         simbol = '+'
         delta_icon = 'feather:arrow-up-right'
-        delta_icon_color = 'green'
+        delta_icon_color = '00C715'
     else: 
         simbol = '-'
         delta_icon = 'feather:arrow-down-left'
@@ -347,7 +347,7 @@ def inplace_card_update(date_start, date_end):
     
     if val_profit_prev < val_profit_now:
         delta_icon_profit = 'feather:arrow-up-right'
-        delta_icon_color_profit = 'green'
+        delta_icon_color_profit = '00C715'
     else: 
         delta_icon_profit = 'feather:arrow-down-left'
         delta_icon_color_profit = 'red'
@@ -357,7 +357,7 @@ def inplace_card_update(date_start, date_end):
     
     if val_count_prev < val_count_now:
         delta_icon_count = 'feather:arrow-up-right'
-        delta_icon_color_count = 'green'
+        delta_icon_color_count = '00C715'
     else: 
         delta_icon_count = 'feather:arrow-down-left'
         delta_icon_color_count = 'red'
@@ -367,7 +367,7 @@ def inplace_card_update(date_start, date_end):
     
     if val_nights_prev < val_nights_now:
         delta_icon_nights = 'feather:arrow-up-right'
-        delta_icon_color_nights = 'green'
+        delta_icon_color_nights = '00C715'
     else: 
         delta_icon_nights = 'feather:arrow-down-left'
         delta_icon_color_nights = 'red'
@@ -503,7 +503,7 @@ def tourfirms_card_update(date_start, date_end):
     delta_firm_val = abs(firm_all_now - firm_all_past)
     if firm_all_past < firm_all_now:
         delta_icon_firm = 'feather:arrow-up-right'
-        delta_icon_color_firm = 'green'
+        delta_icon_color_firm = '00C715'
     else: 
         delta_icon_firm = 'feather:arrow-down-left'
         delta_icon_color_firm = 'red'
@@ -526,7 +526,7 @@ def tourfirms_card_update(date_start, date_end):
     delta_tours_val = abs((tours_all_now - tours_all_past)/1000)
     if tours_all_past < tours_all_now:
         delta_icon_tours = 'feather:arrow-up-right'
-        delta_icon_color_tours = 'green'
+        delta_icon_color_tours = '00C715'
     else: 
         delta_icon_tours = 'feather:arrow-down-left'
         delta_icon_color_tours = 'red'
@@ -1373,7 +1373,7 @@ children = [
                                style={'padding-left':'30px',
                                       'color':'white', 'font-size': 'xx-large'}),                   
                       html.Div([
-                          html.Div('Все данные идут с доковидным годом 2019, но вы можете выбрать периоды сравнения',
+                          html.Div('В верхних виджетах данные по умолчанию сравниваются между 2022 и доковидным 2019 годом. Но вы можете самостоятельно выбрать периоды для сравнения:',
                                    style={'opacity':'70%',
                                           'color':'white', 'font-size': 'large',
                                           'padding-right':'5rem'}),
