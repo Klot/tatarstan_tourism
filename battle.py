@@ -143,6 +143,9 @@ def avg_days_fig_update(date_start, date_end):
         showlegend=False,
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
+        title_font_color="white",
+        font_color="white",
+        hoverlabel = dict(font=dict(color='black')),
         dragmode=False,
         autosize=True)
     fig.update_yaxes(
@@ -152,12 +155,12 @@ def avg_days_fig_update(date_start, date_end):
         #        tat_pivot['Средняя продолжительность пребывания граждан в коллективных средствах размещения'].max()*0.05],
         showgrid=False, 
         visible=False,)
-    fig.update_xaxes(showgrid=False, visible=False,)
+    fig.update_xaxes(showgrid=False, visible=True,)
     fig.add_scatter(
         x = [fig.data[0].x[date_ind]],
         y = [fig.data[0].y[date_ind]],
         mode='markers + text',
-        text = f'{fig.data[0].y[date_ind]:.2f} дн<br>{date_start}',
+        text = f'{fig.data[0].y[date_ind]:.2f} дн',
         textfont = {'color':'#c7c7c7'},
         marker = {'color':'#c7c7c7', 'size':14},
         showlegend=False,
@@ -168,7 +171,7 @@ def avg_days_fig_update(date_start, date_end):
         x = [fig.data[0].x[date_now_ind]],
         y = [fig.data[0].y[date_now_ind]],
         mode='markers + text',
-        text = f'{fig.data[0].y[date_now_ind]:.2f} дн<br>{date_end}',
+        text = f'{fig.data[0].y[date_now_ind]:.2f} дн',
         textfont = {'color':'#fff'},
         marker = {'color':'#fff', 'size':14},
         showlegend=False,
@@ -262,6 +265,9 @@ def people_fig_update(date_start, date_end):
         showlegend=False,
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
+        title_font_color="white",
+        font_color="white",
+        hoverlabel = dict(font=dict(color='black')),
         dragmode=False,
         autosize=True)
     fig.update_yaxes(
@@ -271,12 +277,12 @@ def people_fig_update(date_start, date_end):
                 tat_pivot['Численность размещения общее'].max()*0.1],
         showgrid=False, 
         visible=False,)
-    fig.update_xaxes(showgrid=False, visible=False,)
+    fig.update_xaxes(showgrid=False, visible=True,)
     fig.add_scatter(
         x = [fig.data[0].x[date_ind]],
         y = [fig.data[0].y[date_ind]],
         mode='markers + text',
-        text = f'{(fig.data[0].y[date_ind]/1000000):.2f} млн<br>{date_start}',
+        text = f'{(fig.data[0].y[date_ind]/1000000):.2f} млн',
         textfont = {'color':'#c7c7c7'},
         marker = {'color':'#c7c7c7', 'size':14},
         showlegend=False,
@@ -287,7 +293,7 @@ def people_fig_update(date_start, date_end):
         x = [fig.data[0].x[date_ind_now]],
         y = [fig.data[0].y[date_ind_now]],
         mode='markers + text',
-        text = f'{(fig.data[0].y[date_ind_now]/1000000):.2f} млн<br>{date_end}',
+        text = f'{(fig.data[0].y[date_ind_now]/1000000):.2f} млн',
         textfont = {'color':'#fff'},
         marker = {'color':'#fff', 'size':14},
         showlegend=False,
@@ -399,6 +405,9 @@ def inplace_card_update(date_start, date_end):
             showlegend=False,
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
+            title_font_color="white",
+            font_color="white",
+            hoverlabel = dict(font=dict(color='black')),
             dragmode=False,
             autosize=True)
         fig.update_yaxes(
@@ -408,9 +417,9 @@ def inplace_card_update(date_start, date_end):
                     tat_pivot[i].max()*0.1],
             showgrid=False, 
             visible=False,)
-        fig.update_xaxes(showgrid=False, visible=False,)
-        text_temp_past = f'{(fig.data[0].y[date_ind]):.0f} ед<br>{date_start}' if i == 'Число коллективных средств размещения' else f'{(fig.data[0].y[date_ind]/1000000):.2f} млн<br>{date_start}'
-        text_temp_now = f'{(fig.data[0].y[date_ind_now]):.0f} ед<br>{date_end}' if i == 'Число коллективных средств размещения' else f'{(fig.data[0].y[date_ind_now]/1000000):.2f} млн<br>{date_end}'
+        fig.update_xaxes(showgrid=False, visible=True,)
+        text_temp_past = f'{(fig.data[0].y[date_ind]):.0f} ед' if i == 'Число коллективных средств размещения' else f'{(fig.data[0].y[date_ind]/1000000):.2f} млн'
+        text_temp_now = f'{(fig.data[0].y[date_ind_now]):.0f} ед' if i == 'Число коллективных средств размещения' else f'{(fig.data[0].y[date_ind_now]/1000000):.2f} млн'
         fig.add_scatter(
             x = [fig.data[0].x[date_ind]],
             y = [fig.data[0].y[date_ind]],
