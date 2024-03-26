@@ -651,6 +651,23 @@ def clusters_pivot_table_update(famous, themes,cluster, date_filter):
         cluster_pivot_date = pd.merge(cluster_pivot1,cluster_pivot2, on='Тема').sort_values('Кол-во', ascending=False)
         cluster_pivot_date['id'] = cluster_pivot_date.index
         cluster_pivot_date = cluster_pivot_date[cluster_pivot_date['Кол-во'] > 0]
+        cluster_pivot_date['skip'] = cluster_pivot_date['skip'] + cluster_pivot_date['speech']
+        
+        def reuslt_calculate(columns):            
+            pos_val = columns['positive'].sum()  
+            neg_val = columns['negative'].sum()
+            result_indicator = neg_val / (pos_val + neg_val) * 100
+            
+            if result_indicator <15:  
+                result = '😀'
+            elif (result_indicator >=15) and (result_indicator<50): 
+                result = '😐'
+            elif result_indicator>=50:
+                result = '😡'
+            else:
+                result = '😐'
+            return result
+        cluster_pivot_date['result'] = cluster_pivot_date[['positive','negative']].apply(reuslt_calculate, axis=1)     
         columnDefs  = [
             {
             'headerName': '№',
@@ -661,7 +678,7 @@ def clusters_pivot_table_update(famous, themes,cluster, date_filter):
             {
             'headerName': '',
             'children': [
-                {'field':'Тема', 'headerName':'Тематика', 'width': 166, 'minWidth':142},
+                {'field':'Тема', 'headerName':'Тематика', 'width': 153, 'minWidth':142},
                 ],
             },
             {
@@ -676,8 +693,8 @@ def clusters_pivot_table_update(famous, themes,cluster, date_filter):
                 {'field':'positive', 'headerName':'Позитивный', 'width': 111}, 
                 {'field':'negative', 'headerName':'Негативный', 'width': 110},
                 {'field':'neutral', 'headerName':'Нейтральный', 'width': 117},                
-                {'field':'speech', 'headerName':'Речь', 'width': 67},
                 {'field':'skip', 'headerName':'Прочее', 'width': 83},
+                {'field':'result', 'headerName':'Оценка', 'width': 84},
                 ],
             },            
             ]
