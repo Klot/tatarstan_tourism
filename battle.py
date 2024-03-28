@@ -30,7 +30,8 @@ try:
     themes_count = pd.read_excel(r'assets/data/top_themes_by_cluster_tone_date.xlsx')
 except Exception as e:
     print(e)
-
+tat_pivot['Год_кр'] = "'"+tat_pivot['Год'].astype('str').str[2:]
+df_tat['Год_месяц'] = df_tat['Год_месяц'].astype('str').str[5:] +"'"+df_tat['Год_месяц'].astype('str').str[2:4]
 cluster_describe = cluster_describe.T
 cluster_describe['Describe'] = cluster_describe.agg(' | '.join, axis=1)
 cluster_describe = cluster_describe.reset_index().drop(columns=[0,1,2,3,4])
@@ -56,7 +57,7 @@ emoji_pivot = df_tat.pivot_table(index=['Num_Cluster', 'Год_месяц', 'Д�
                             values=['Emoji_tone_pos','Emoji_tone_neg','Emoji_count_posivive','Emoji_count_negative'], 
                             aggfunc='sum', dropna=True).reset_index()
 
-
+nl = '\n'
 
     
 def unem(columns):
@@ -102,7 +103,7 @@ def avg_days_fig_update(date_start, date_end):
     date_now_ind = dates.index(date_end)    
     val_now = tat_pivot[tat_pivot['Год'] == date_end]['Средняя продолжительность пребывания граждан в коллективных средствах размещения'].iloc[0]
     val_prev = tat_pivot[tat_pivot['Год'] == date_start]['Средняя продолжительность пребывания граждан в коллективных средствах размещения'].iloc[0]
-    delta = abs((val_now /val_prev - 1)*100).round(2) if (val_prev < val_now) else abs((1 - (val_now / val_prev)) * 100).round(2)
+    delta = abs((val_now /val_prev - 1)*100).round(0) if (val_prev < val_now) else abs((1 - (val_now / val_prev)) * 100).round(0)
     delta_val = abs(val_now - val_prev)
     if val_prev < val_now:
         simbol = '+'
@@ -130,7 +131,7 @@ def avg_days_fig_update(date_start, date_end):
     fig = go.Figure()
     fig.add_trace(
         go.Scatter(
-            x=tat_pivot['Год'],
+            x=tat_pivot['Год_кр'],
             y=tat_pivot['Средняя продолжительность пребывания граждан в коллективных средствах размещения'],
             line_shape='spline',
             line=dict(color='#fff', width=3),
@@ -179,7 +180,7 @@ def avg_days_fig_update(date_start, date_end):
         hoverinfo='skip',
         )
     fig.update_annotations(opacity=0)
-    return fig, val_now.round(2), delta_icon, delta_icon_color, f'{delta_val:.2f} ({delta:.2f}%) к {date_start}'
+    return fig, val_now.round(2), delta_icon, delta_icon_color, f'{delta_val:.2f} ({delta:.0f}%) к {date_start}'
 
 
 @app.callback(
@@ -213,7 +214,7 @@ def people_fig_update(date_start, date_end):
     
     people_progress = int(perc_frg_now)
     
-    delta = abs((val_total_now / val_total_prev - 1)*100).round(2) if (val_total_prev < val_total_now) else abs((1 - (val_total_now / val_total_prev)) * 100).round(2)
+    delta = abs((val_total_now / val_total_prev - 1)*100).round(0) if (val_total_prev < val_total_now) else abs((1 - (val_total_now / val_total_prev)) * 100).round(0)
     delta_val = abs(val_total_now - val_total_prev)
     if val_total_prev < val_total_now:
         simbol = '+'
@@ -252,7 +253,7 @@ def people_fig_update(date_start, date_end):
     fig = go.Figure()
     fig.add_trace(
         go.Scatter(
-            x=tat_pivot['Год'],
+            x=tat_pivot['Год_кр'],
             y=tat_pivot['Численность размещения общее'],
             line_shape='spline',
             line=dict(color='#fff', width=3),
@@ -305,7 +306,7 @@ def people_fig_update(date_start, date_end):
             f'{perc_frg_now:.2f}%', f'{val_fgn_now/1000000:.2f} млн', 
             f'{perc_rf_now:.2f}%', f'{val_rf_now/1000000:.2f} млн',
             people_progress, delta_icon, delta_icon_color, 
-            f'{delta_val/1000000:.2f} ({delta:.2f}%) к {date_start}')
+            f'{delta_val/1000000:.2f} ({delta:.0f}%) к {date_start}')
 
 
 @app.callback(
@@ -342,7 +343,7 @@ def inplace_card_update(date_start, date_end):
     val_nights_now = tat_pivot[tat_pivot['Год'] == date_end]['Число ночевок в коллективных средствах размещения'].iloc[0]
     val_nights_prev = tat_pivot[tat_pivot['Год'] == date_start]['Число ночевок в коллективных средствах размещения'].iloc[0]
     
-    delta_profit = abs((val_profit_now / val_profit_prev - 1)*100).round(2) if (val_profit_prev < val_profit_now) else abs((1 - (val_profit_now / val_profit_prev)) * 100).round(2)
+    delta_profit = abs((val_profit_now / val_profit_prev - 1)*100).round(0) if (val_profit_prev < val_profit_now) else abs((1 - (val_profit_now / val_profit_prev)) * 100).round(0)
     delta_profit_val = abs(val_profit_now - val_profit_prev).round(2)
     
     if val_profit_prev < val_profit_now:
@@ -352,7 +353,7 @@ def inplace_card_update(date_start, date_end):
         delta_icon_profit = 'feather:arrow-down-left'
         delta_icon_color_profit = 'red'
         
-    delta_count = abs((val_count_now / val_count_prev - 1)*100).round(2) if (val_count_prev < val_count_now) else abs((1 - (val_count_now / val_count_prev)) * 100).round(2)
+    delta_count = abs((val_count_now / val_count_prev - 1)*100).round(0) if (val_count_prev < val_count_now) else abs((1 - (val_count_now / val_count_prev)) * 100).round(0)
     delta_count_val = abs(val_count_now - val_count_prev)
     
     if val_count_prev < val_count_now:
@@ -362,7 +363,7 @@ def inplace_card_update(date_start, date_end):
         delta_icon_count = 'feather:arrow-down-left'
         delta_icon_color_count = 'red'
         
-    delta_nights = abs((val_nights_now / val_nights_prev - 1)*100).round(2) if (val_nights_prev < val_nights_now) else abs((1 - (val_nights_now / val_nights_prev)) * 100).round(2)
+    delta_nights = abs((val_nights_now / val_nights_prev - 1)*100).round(0) if (val_nights_prev < val_nights_now) else abs((1 - (val_nights_now / val_nights_prev)) * 100).round(0)
     delta_nights_val = abs(val_nights_now - val_nights_prev)
     
     if val_nights_prev < val_nights_now:
@@ -392,7 +393,7 @@ def inplace_card_update(date_start, date_end):
         fig = go.Figure()
         fig.add_trace(
             go.Scatter(
-                x=tat_pivot['Год'],
+                x=tat_pivot['Год_кр'],
                 y=tat_pivot[i],
                 line_shape='spline',
                 line=dict(color='#fff', width=3),
@@ -446,13 +447,13 @@ def inplace_card_update(date_start, date_end):
         figs.append(fig)
     
     return (f'{val_profit_now/1000000:.2f}', delta_icon_profit, delta_icon_color_profit, 
-            f'{delta_profit_val/1000000:.2f} ({delta_profit:.2f}%) к {date_start}', figs[0],
+            f"{delta_profit_val/1000000:.2f} ({delta_profit:.0f}%) к {(date_start)}", figs[0],
             
             f'{val_count_now:.0f}', delta_icon_count, delta_icon_color_count, 
-            f'{delta_count_val:.0f} ({delta_count:.0f}%) к {date_start}', figs[1],
+            f"{delta_count_val:.0f} ({delta_count:.0f}%) к {(date_start)}", figs[1],
             
             f'{val_nights_now/1000000:.2f}', delta_icon_nights, delta_icon_color_nights, 
-            f'{delta_nights_val/1000000:.2f} ({delta_nights:.2f}%) к {date_start}', figs[2])
+            f"{delta_nights_val/1000000:.2f} ({delta_nights:.0f}%) к {(date_start)}", figs[2])
 
 
 @app.callback(
@@ -534,9 +535,9 @@ def tourfirms_card_update(date_start, date_end):
     return (firm_all_now, delta_icon_firm, delta_icon_color_firm, 
             f'{delta_firm_val:.0f} ({delta_firm:.0f}%) к {date_start}',
             
-            tour_perc_now, f'{tour_now} единиц', 
-            oper_perc_now, f'{oper_now} единиц',
-            touroper_perc_now, f'{touroper_now} единиц',
+            tour_perc_now, f'{tour_now} ед.',
+            oper_perc_now, f'{oper_now} ед.',
+            touroper_perc_now, f'{touroper_now} ед.',
             
             f'{tours_all_now/1000:.1f}', delta_icon_tours, delta_icon_color_tours, 
             f'{delta_tours_val:.1f} ({delta_tours:.0f}%) к {date_start}',
@@ -593,9 +594,12 @@ def pie_upadte(result_style, theme, cluster, date):
     elif (result_indicator >=15) and (result_indicator<50): 
         result = 'Оценка: Значительная доля негативных отзывов, возможны зоны роста'
         result_style['color'] = 'yellow'
-    else:
+    elif result_indicator >= 50:
         result = 'Оценка: Критическая доля негативных отзывов, существуют проблемы, которые необходимо оперативно решать'
         result_style['color'] = 'rgb(255, 99, 71)'
+    else:
+        result = 'Оценка: Положительное отношение туристов'
+        result_style['color'] = 'white'
 
     fig = px.pie(df_pivot, 
                  values='Тест',
@@ -672,29 +676,24 @@ def clusters_pivot_table_update(famous, themes,cluster, date_filter):
             {
             'headerName': '№',
             'children': [
-                {'field':'id', 'headerName':'', 'width': 46},
+                {'field':'id', 'headerName':'', 'width': 52},
                 ],
             },
             {
             'headerName': '',
             'children': [
-                {'field':'Тема', 'headerName':'Тематика', 'width': 153, 'minWidth':142},
+                {'field':'Тема', 'headerName':'Тематика', 'width': 178, 'minWidth':142},
                 ],
             },
             {
-            'headerName': 'Кол-во отзывов',
+            'headerName': 'Кол-во отзывов по тональности',
             'children': [                                        
-                {'field':'Кол-во', 'headerName':'Всего', 'width': 74},
-                ]
-            },
-            {
-            'headerName': 'Тональность отзыва',
-            'children': [                                                                            
-                {'field':'positive', 'headerName':'Позитивный', 'width': 111}, 
-                {'field':'negative', 'headerName':'Негативный', 'width': 110},
-                {'field':'neutral', 'headerName':'Нейтральный', 'width': 117},                
-                {'field':'skip', 'headerName':'Прочее', 'width': 83},
-                {'field':'result', 'headerName':'Оценка', 'width': 84},
+                {'field':'Кол-во', 'headerName':'Всего', 'width': 80},
+                {'field':'positive', 'headerName':'Поз-ые', 'width': 89},
+                {'field':'negative', 'headerName':'Нег-ые', 'width': 91},
+                {'field':'neutral', 'headerName':'Нейт-ые', 'width': 97},
+                {'field':'skip', 'headerName':'Прочие', 'width': 95},
+                {'field':'result', 'headerName':'Оценка', 'width': 95},
                 ],
             },            
             ]
@@ -725,35 +724,35 @@ def clusters_pivot_table_update(famous, themes,cluster, date_filter):
             {
             'headerName': 'Кластер',
             'children': [
-                {'field':'Describe', 'headerName':'', 'width': 278, 'minWidth':142},
+                {'field':'Describe', 'headerName':'', 'width': 233, 'minWidth':142},
                 ],
             },
             {
             'headerName': 'Кол-во отзывов',
             'children': [                                        
-                {'field':'Всего отзывов', 'headerName':'', 'width': 72, 'maxWidth':72 },
+                {'field':'Всего отзывов', 'headerName':'', 'width': 80, 'maxWidth':80 },
                 ]
             },
             {
             'headerName': 'Тональность отзыва',
             'children': [                                                                            
-                {'field':'Негативный отзыв', 'headerName':'-', 'width': 47}, 
-                {'field':'Нейтральный отзыв', 'headerName':'0', 'width': 62},
-                {'field':'Позитивный отзыв', 'headerName':'+', 'width': 55},
+                {'field':'Негативный отзыв', 'headerName':'-', 'width': 49},
+                {'field':'Нейтральный отзыв', 'headerName':'0', 'width': 70},
+                {'field':'Позитивный отзыв', 'headerName':'+', 'width': 60},
                 ],
             },
             {
             'headerName': 'Кол-во эмодзи',
             'children': [
-                {'field':'Постов с эмодзи', 'headerName':'', 'width': 67, 'maxWidth':70},                   
+                {'field':'Постов с эмодзи', 'headerName':'', 'width': 75, 'maxWidth':75},
                 ],
             },
             {
             'headerName': 'Тональность эмодзи',
             'children': [                                                                            
                 {'field':'Негативные эмодзи', 'headerName':'-', 'width': 46}, 
-                {'field':'Нейтральные эмодзи', 'headerName':'0', 'width': 55},
-                {'field':'Позитивные эмодзи', 'headerName':'+', 'width': 56},
+                {'field':'Нейтральные эмодзи', 'headerName':'0', 'width': 67},
+                {'field':'Позитивные эмодзи', 'headerName':'+', 'width': 59},
                 ],
             }
             ]
@@ -781,17 +780,17 @@ def clust_polt_update(date_end, type_graph, famous_type, cluster, tone, date_fil
             cluster_pivot_df_temp = cluster_pivot_df_temp[cluster_pivot_df_temp['Num_Cluster'].isin(cluster)]
         if tone:
             if ('positive' in tone) and ('negative' in tone):
-                cluster_pivot_temp = cluster_pivot_df_temp.pivot_table(index='Год_месяц', values=['Всего отзывов'], aggfunc='sum').reset_index()    
+                cluster_pivot_temp = cluster_pivot_df_temp.pivot_table(index='Год_месяц', values=['Всего отзывов'], aggfunc='sum').reset_index()
             if 'positive' in tone:
                 cluster_pivot_temp = cluster_pivot_df_temp.pivot_table(index='Год_месяц', values=['Позитивный отзыв'], aggfunc='sum').reset_index().rename(columns={'Позитивный отзыв':'Всего отзывов'})
             else:
-                cluster_pivot_temp = cluster_pivot_df_temp.pivot_table(index='Год_месяц', values=['Негативный отзыв'], aggfunc='sum').reset_index().rename(columns={'Негативный отзыв':'Всего отзывов'})            
+                cluster_pivot_temp = cluster_pivot_df_temp.pivot_table(index='Год_месяц', values=['Негативный отзыв'], aggfunc='sum').reset_index().rename(columns={'Негативный отзыв':'Всего отзывов'})
         else:
             cluster_pivot_temp = cluster_pivot_df_temp.pivot_table(index='Год_месяц', values=['Всего отзывов'], aggfunc='sum').reset_index()
             
         #cluster_pivot_temp = cluster_pivot.pivot_table(values=['Всего отзывов'], columns=['Num_Cluster','Год_месяц'], aggfunc='sum').reset_index().T.reset_index()[1:]
         fig = px.bar(cluster_pivot_temp, 
-                     x=cluster_pivot_temp['Год_месяц'], 
+                     x=cluster_pivot_temp['Год_месяц'],
                      y=cluster_pivot_temp['Всего отзывов'],
                      text=cluster_pivot_temp['Всего отзывов'],
                      #color=cluster_pivot_temp['Num_Cluster']
@@ -878,7 +877,7 @@ def clust_polt_update(date_end, type_graph, famous_type, cluster, tone, date_fil
             fig.add_trace(
                     go.Scatter(
                         x=cluster_pivot_temp[(cluster_pivot_temp['Тема']==th)].sort_values('Год_месяц')['Год_месяц'],
-                        y=cluster_pivot_temp[(cluster_pivot_temp['Тема']==th)].sort_values('Год_месяц')['Кол-во'],                
+                        y=cluster_pivot_temp[(cluster_pivot_temp['Тема']==th)].sort_values('Год_месяц')['Кол-во'],
                         line_shape='spline',
                         mode='lines',    
                         #line=dict(color=color, width=3),
@@ -1084,9 +1083,6 @@ def tone_plot_update(cluster, tone, famous,date_filter,theme):
                     xanchor="right",
                     x=0.9
                 ))
-
-
-            
     return fig
 
 @app.callback(
@@ -1388,12 +1384,12 @@ children = [
                children=[
                       html.Div("Туризм в Татарстане", 
                                style={'padding-left':'30px',
-                                      'color':'white', 'font-size': 'xx-large'}),                   
+                                      'color':'white', 'font-size': '36px'}),
                       html.Div([
-                          html.Div('В верхних виджетах данные по умолчанию сравниваются между 2022 и доковидным 2019 годом. Но вы можете самостоятельно выбрать периоды для сравнения:',
+                          html.Div('В верхних виджетах данные по умолчанию сравниваются между 2022 и доковидным 2019 годом:',
                                    style={'opacity':'70%',
-                                          'color':'white', 'font-size': 'large',
-                                          'padding-right':'5rem'}),
+                                          'color':'white', 'font-size': '24px',
+                                          'padding-right':'2rem'}),
                           html.Div([
                               dmc.Select(
                                         #label="На дату",
@@ -1402,7 +1398,8 @@ children = [
                                         value=dates[3],
                                         data=[{'label':val, 'value':val} for val in dates],
                                         radius=20,
-                                        style={"width": 80, 
+                                        size='lg',
+                                        style={"width": 120,
                                                "marginBottom": 10,
                                                "marginTop": 10},
                                     ),
@@ -1415,7 +1412,8 @@ children = [
                                         value=dates[-1],
                                         data=[{'label':val, 'value':val} for val in dates],
                                         radius=20,
-                                        style={"width": 80, 
+                                        size='lg',
+                                        style={"width": 120,
                                                "marginBottom": 10,
                                                "marginTop": 10},
                                     ),
@@ -1436,14 +1434,14 @@ children = [
                                      html.Div([
                                          DashIconify(icon="feather:arrow-up-right",
                                                      id='delta-avg-days-icon',
-                                                     color="gray", width=20),
+                                                     color="gray", width=30),
                                          html.Div([], id='delta-avg-days', className='card-delta'),
-                                     ], className='card-delta-container'),
+                                     ], className='big-card-delta-container'),
                                      html.Div(['Дня'], className='card-value-label',),
                                  ],),
                              ], className='big-card-value-container'),
                              html.Div(["""Средняя 
-                                        продолжительность 
+                                        пр-ть 
                                         пребывания граждан 
                                         в коллективных средствах размещения
                                         """], className='card-describe'),                             
@@ -1470,9 +1468,9 @@ children = [
                                          html.Div([
                                              DashIconify(icon="feather:arrow-up-right",
                                                          id='delta-avg-people-icon',
-                                                         color="gray", width=20),
+                                                         color="gray", width=30),
                                              html.Div([], id='delta-avg-people', className='card-delta'),
-                                         ], className='card-delta-container'),
+                                         ], className='big-card-delta-container'),
                                          html.Div(['Млн чел.'], className='card-value-label',),
                                      ],),
                                  ], className='big-card-value-container'),
@@ -1513,24 +1511,26 @@ children = [
                  dmc.Col(
                      dmc.Card(
                          children=[ 
-                             dmc.Text("Коллективные средства размещения", weight=500),
+                             dmc.Text("Коллективные средства размещения (КСР)", weight=500, size=22),
                              html.Div([
                                  html.Div([
                                      html.Div([
-                                         html.Div([], id='profit-inplace', className='medium-card-value'),
                                          html.Div([
                                              html.Div([
                                                  DashIconify(icon="feather:arrow-up-right",
-                                                             id='delta-profit-inplace-icon',
-                                                             color="gray", width=20),
+                                                    id='delta-profit-inplace-icon',
+                                                    color="gray", width=30),
                                                  html.Div([], id='delta-profit-inplace', className='card-delta'),
+
                                              ], className='card-delta-container'),
-                                             html.Div(['Млн руб.'], className='card-value-label',),
-                                         ],),                                
-                                     ], className='big-card-value-container'),
-                                     html.Div(["""Доходы коллективных
-                                               средств размещения
-                                               """], className='card-describe'),
+
+                                         ],),
+                                         html.Div([
+                                            html.Div([], id='profit-inplace', className='medium-card-value'),
+                                            html.Div(['Млн руб.'], className='card-value-label',),
+                                         ],style={'display':'flex', 'align-items':'baseline'}),
+                                     ], className='mid-card-value-container'),
+                                     html.Div(["""Доходы КСР"""], className='card-describe'),
                                      html.Div([
                                          dcc.Graph(id='profit-inplace-plot',
                                                         config={'displayModeBar':False,
@@ -1541,20 +1541,21 @@ children = [
                                  ],),
                                  html.Div([
                                     html.Div([
-                                        html.Div([], id='count-inplace', className='medium-card-value'),
                                         html.Div([
                                             html.Div([
                                                 DashIconify(icon="feather:arrow-up-right",
-                                                            id='delta-count-inplace-icon',
-                                                            color="gray", width=20),
+                                                        id='delta-count-inplace-icon',
+                                                        color="gray", width=30),
                                                 html.Div([], id='delta-count-inplace', className='card-delta'),
                                             ], className='card-delta-container'),
-                                            html.Div(['ед.'], className='card-value-label',),
-                                        ],),                                    
-                                    ], className='big-card-value-container'),
-                                    html.Div(["""Число коллективных
-                                              средств размещения
-                                              """], className='card-describe'),
+
+                                        ],),
+                                        html.Div([
+                                            html.Div([], id='count-inplace', className='medium-card-value'),
+                                            html.Div(['Ед.'], className='card-value-label',),
+                                        ],style={'display':'flex', 'align-items':'baseline'}),
+                                    ], className='mid-card-value-container'),
+                                    html.Div(["""Кол-во  КСР"""], className='card-describe'),
                                     html.Div([
                                         dcc.Graph(id='count-inplace-plot',
                                                        config={'displayModeBar':False,
@@ -1565,21 +1566,20 @@ children = [
                                  ], className='inplace-col-container'),
                                  html.Div([
                                      html.Div([
-                                         html.Div([], id='count-nights-inplace', className='medium-card-value'),
                                          html.Div([
                                              html.Div([
-                                                 DashIconify(icon="feather:arrow-up-right",
-                                                             id='delta-count-nights-inplace-icon',
-                                                             color="gray", width=20),
-                                                 html.Div([], id='delta-count-nights-inplace', className='card-delta'),
+                                                DashIconify(icon="feather:arrow-up-right",
+                                                            id='delta-count-nights-inplace-icon',
+                                                            color="gray", width=30),
+                                                html.Div([], id='delta-count-nights-inplace', className='card-delta'),
                                              ], className='card-delta-container'),
+                                         ],),
+                                         html.Div([
+                                             html.Div([], id='count-nights-inplace', className='medium-card-value'),
                                              html.Div(['Млн раз'], className='card-value-label',),
-                                         ],),                                    
-                                     ], className='big-card-value-container'),
-                                     html.Div(["""Число ночевок
-                                               в коллективных 
-                                               средствах размещения 
-                                               """], className='card-describe'),
+                                         ],style={'display':'flex', 'align-items':'baseline'}),
+                                     ], className='mid-card-value-container'),
+                                     html.Div(["""Кол-во ночевок в КСР"""], className='card-describe'),
                                      html.Div([
                                          dcc.Graph(id='count-nights-inplace-plot',
                                                         config={'displayModeBar':False,
@@ -1600,22 +1600,24 @@ children = [
                  dmc.Col(
                      dmc.Card(
                          children=[ 
-                             dmc.Text("Деятельность туристических фирм", weight=500),
+                             dmc.Text("Деятельность туристических фирм", weight=500, size=22),
                              html.Div([
                                  html.Div([
                                      html.Div([
                                          html.Div([
-                                             html.Div([], id='tourfirm-count-all', className='medium-card-value'),
                                              html.Div([
                                                  html.Div([
-                                                     DashIconify(icon="feather:arrow-up-right",
-                                                                 id='delta-tourfirm-count-icon',
-                                                                 color="gray", width=20),
-                                                     html.Div([], id='delta-tourfirm-count', className='card-delta'),
+                                                    DashIconify(icon="feather:arrow-up-right",
+                                                                id='delta-tourfirm-count-icon',
+                                                                color="gray", width=30),
+                                                    html.Div([], id='delta-tourfirm-count', className='card-delta'),
                                                  ], className='card-delta-container'),
+                                             ],),
+                                             html.Div([
+                                                 html.Div([], id='tourfirm-count-all', className='medium-card-value'),
                                                  html.Div(['Ед.'], className='card-value-label',),
-                                             ],),                                   
-                                         ], className='big-card-value-container'),
+                                             ],style={'display':'flex', 'align-items':'baseline'}),
+                                         ], className='mid-card-value-container'),
                                          html.Div(["Число турфирм"], className='card-describe'),
                                          html.Div([
                                              html.Div([
@@ -1623,21 +1625,21 @@ children = [
                                                           id='tourfirm-tour-progress-label',
                                                           className='tour-label-progress'),
                                                  dbc.Progress(color='#fff', id='tourfirm-tour-progress'),
-                                                 html.Div([], id='tourfirm-tour-progress-abs-value'),
+                                                 html.Div([], id='tourfirm-tour-progress-abs-value', className='tourfirm-abs-value'),
                                                  ], className='tourfirm-progress-container'),
                                              html.Div([
                                                  html.Div(['Туроаператорская'], 
                                                           id='tourfirm-oper-progress-label',
                                                           className='tour-label-progress'),
                                                  dbc.Progress(color='#fff', id='tourfirm-oper-progress'),
-                                                 html.Div([], id='tourfirm-oper-progress-abs-value'),
+                                                 html.Div([], id='tourfirm-oper-progress-abs-value', className='tourfirm-abs-value'),
                                                  ], className='tourfirm-progress-container'),
                                              html.Div([
                                                  html.Div(['Туроператорская и турагентская'], 
                                                           id='tourfirm-touroper-progress-label',
                                                           className='tour-label-progress'),
                                                  dbc.Progress(color='#fff', id='tourfirm-touroper-progress'),
-                                                 html.Div([], id='tourfirm-touroper-progress-abs-value'),
+                                                 html.Div([], id='tourfirm-touroper-progress-abs-value', className='tourfirm-abs-value'),
                                                  ], className='tourfirm-progress-container'),
                                              ], className='tourfirm-progresses-container'),                                 
                                          ],),
@@ -1645,17 +1647,19 @@ children = [
                                  html.Div([
                                      html.Div([
                                          html.Div([
-                                             html.Div([], id='tours-count-all', className='medium-card-value'),
                                              html.Div([
                                                  html.Div([
-                                                     DashIconify(icon="feather:arrow-up-right",
-                                                                 id='delta-tours-count-all-icon',
-                                                                 color="gray", width=20),
-                                                     html.Div([], id='delta-tours-count-all', className='card-delta'),
+                                                    DashIconify(icon="feather:arrow-up-right",
+                                                                id='delta-tours-count-all-icon',
+                                                                color="gray", width=30),
+                                                    html.Div([], id='delta-tours-count-all', className='card-delta'),
                                                  ], className='card-delta-container'),
+                                             ],),
+                                             html.Div([
+                                                 html.Div([], id='tours-count-all', className='medium-card-value'),
                                                  html.Div(['Тыс шт.'], className='card-value-label',),
-                                             ],),                                    
-                                         ], className='big-card-value-container'),
+                                             ],style={'display':'flex', 'align-items':'baseline'}),
+                                         ], className='mid-card-value-container'),
                                          html.Div(["Число турпакетов"], className='card-describe'),
                                          html.Div([
                                              html.Div([
@@ -1698,7 +1702,7 @@ children = [
         dmc.Col(
             dmc.Card(
                 children=[ 
-                    dmc.Text("", weight=500, 
+                    dmc.Text("", weight=500, size=22,
                              id='header-cluster-pivot-table'),  
                         html.Div([
                             html.Div([
@@ -1761,7 +1765,7 @@ children = [
                 dmc.Card(
                         children=[
                             html.Div([                                
-                                dmc.Text("", weight=500, id='header-voices'),
+                                dmc.Text("", weight=500, size=22, id='header-voices'),
                                 html.Div([
                                     dmc.SegmentedControl(
                                             id="cluster_type_radio",
@@ -1771,7 +1775,7 @@ children = [
                                                 {"value": 'cluster', "label": "По кластерам"},
                                             ],
                                             radius=20,
-                                            size='xs',
+                                            size='md',
                                             className='emoji-radio'
                                         ),
                                     ],id='cluster_type_radio-container', style={'display':'block'}),
@@ -1800,13 +1804,13 @@ children = [
                                 ],className='emoji-by-cluster-plot-cont'),
                                 html.Div([
                                     html.Div([
-                                        dmc.Text("Положительные эмодзи", weight=500,
+                                        dmc.Text("Положительные эмодзи", weight=500, size=22,
                                                  id='header-positive-emoji-container'),
                                         html.Div(id='positive-emoji-stuck'),
                                         ], id='positive-emoji-container'),
                                     html.Div([
                                         html.Div([
-                                            dmc.Text("Отрицательные эмодзи", weight=500,
+                                            dmc.Text("Отрицательные эмодзи", weight=500, size=22,
                                                      id='header-negative-emoji-container'),                                            
                                         ],className='header-emoji-radio-container'),
                                         html.Div(id='negative-emoji-stuck'),
@@ -1824,7 +1828,8 @@ children = [
             dmc.Card(
                 children=[
                     html.Div([
-                        dmc.Text("", weight=500, id='detail-card-header'),
+                        dmc.Text("", weight=500, size=22, id='detail-card-header',
+                                 style={'padding-bottom':'20px'}),
                         html.Div([
                             html.Div([
                                 dmc.SegmentedControl(
@@ -1835,7 +1840,7 @@ children = [
                                             {"value": 'famous', "label": "Тема"},
                                         ],
                                         radius=20,
-                                        size='xs',
+                                        size='md',
                                         className='emoji-radio'
                                     ),
                                 ], className='famous-cluster-select-container'),
@@ -1844,38 +1849,42 @@ children = [
                                         dmc.MenuTarget(dmc.Button("Фильтры", 
                                                                   leftIcon=DashIconify(icon="feather:filter"),
                                                                   variant="light",
+                                                                  size='lg',
                                                                   color='blue',
                                                                   radius='xl')),
                                         dmc.MenuDropdown(
                                             [   
-                                                dmc.MenuLabel("Дата"),
+                                                dmc.MenuLabel("Дата", style={'font-size':'18px'}),
                                                 dmc.MultiSelect(
                                                     id='filter-date',
                                                     data=[{'value':val, 'label':val} for val in sorted(df_tat['Год_месяц'].unique(), reverse=True)],
                                                     value='',
                                                     clearable=True,
-                                                    style={"width": 160},
+                                                    size='lg',
+                                                    style={"width": 240},
                                                 ),
                                                 dmc.MenuDivider(), 
-                                                dmc.MenuLabel("Кластер"),
+                                                dmc.MenuLabel("Кластер", style={'font-size':'18px'}),
                                                 dmc.MultiSelect(
                                                     id='filter-cluster',
                                                     data=[{'value':val, 'label':val} for val in cluster_describe['Num_Cluster'].unique()],
                                                     value='',
                                                     clearable=True,
-                                                    style={"width": 160},
+                                                    size='lg',
+                                                    style={"width": 240},
                                                 ),
                                                 dmc.MenuDivider(), 
-                                                dmc.MenuLabel("Тональность отзыва"),
+                                                dmc.MenuLabel("Тональность отзыва", style={'font-size':'18px'}),
                                                 dmc.MultiSelect(
                                                     id='filter-tone',
                                                     data=[{'value':val, 'label':val} for val in table_tone['Тональность'].unique()],
                                                     value='',
                                                     clearable=True,
-                                                    style={"width": 160},
+                                                    size='lg',
+                                                    style={"width": 240},
                                                 ),
                                                 dmc.MenuDivider(), 
-                                                dmc.MenuLabel("Тематика"),
+                                                dmc.MenuLabel("Тематика", style={'font-size':'18px'}),
                                                 dmc.MultiSelect(
                                                     id='filter-theme',
                                                     data=[{'value':val, 'label':val} for val in sorted(themes_count['Тема'].unique())],
@@ -1883,7 +1892,8 @@ children = [
                                                     clearable=True,
                                                     searchable=True,
                                                     nothingFound="No options found",
-                                                    style={"width": 160},
+                                                    size='lg',
+                                                    style={"width": 240},
                                                 )
                                             ]
                                         ),
