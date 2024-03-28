@@ -31,7 +31,7 @@ try:
 except Exception as e:
     print(e)
 tat_pivot['Год_кр'] = "'"+tat_pivot['Год'].astype('str').str[2:]
-df_tat['Год_месяц'] = df_tat['Год_месяц'].astype('str').str[5:] +"'"+df_tat['Год_месяц'].astype('str').str[2:4]
+
 cluster_describe = cluster_describe.T
 cluster_describe['Describe'] = cluster_describe.agg(' | '.join, axis=1)
 cluster_describe = cluster_describe.reset_index().drop(columns=[0,1,2,3,4])
@@ -560,56 +560,100 @@ def tourfirms_card_update(date_start, date_end):
     
     Output('pie-analytic-result', 'children'),
     Output('pie-analytic-result', 'style'),
+    Input('famous_type_radio','value'),
     Input('pie-analytic-result', 'style'),
     Input('filter-theme','value'),
     Input('filter-cluster','value'),
     Input('filter-date','value'),
     )
-def pie_upadte(result_style, theme, cluster, date):    
+def pie_upadte(famous, result_style, theme, cluster, date):
     fig = go.Figure()
-    df_tat_temp = df_tat
-    if theme:
-        df_tat_temp = df_tat_temp[df_tat_temp['Тема'].isin(theme)]
-    if cluster:
-        df_tat_temp = df_tat_temp[df_tat_temp['Num_Cluster'].isin(cluster)]
-    if date:
-        df_tat_temp = df_tat_temp[df_tat_temp['Год_месяц'].isin(date)]
 
-    df_pivot = df_tat_temp[(df_tat_temp['Тональность']=='negative') |
-                           (df_tat_temp['Тональность']=='neutral') |
-                           (df_tat_temp['Тональность']=='positive')].pivot_table(values='Тест', index='Тональность', aggfunc='count').reset_index()
-            
-    total = df_pivot['Тест'].sum()
-    pos_val = df_pivot[df_pivot['Тональность']=='positive']['Тест'].sum()
-    pos_perc = (pos_val / total) * 100
-    neu_val =df_pivot[df_pivot['Тональность']=='neutral']['Тест'].sum()
-    neu_perc = (neu_val / total) * 100
-    neg_val = df_pivot[df_pivot['Тональность']=='negative']['Тест'].sum()
-    neg_perc = (neg_val / total) * 100
-    result_indicator = neg_val / (pos_val + neg_val) * 100
-    
-    if result_indicator <15:  
-        result = 'Оценка: Положительное отношение туристов'
-        result_style['color'] = 'white'
-    elif (result_indicator >=15) and (result_indicator<50): 
-        result = 'Оценка: Значительная доля негативных отзывов, возможны зоны роста'
-        result_style['color'] = 'yellow'
-    elif result_indicator >= 50:
-        result = 'Оценка: Критическая доля негативных отзывов, существуют проблемы, которые необходимо оперативно решать'
-        result_style['color'] = 'rgb(255, 99, 71)'
+    if famous != 'famous':
+        df_tat_temp = df_tat
+        if theme:
+            df_tat_temp = df_tat_temp[df_tat_temp['Тема'].isin(theme)]
+        if cluster:
+            df_tat_temp = df_tat_temp[df_tat_temp['Num_Cluster'].isin(cluster)]
+        if date:
+            df_tat_temp = df_tat_temp[df_tat_temp['Год_месяц'].isin(date)]
+
+        df_pivot = df_tat_temp[(df_tat_temp['Тональность']=='negative') |
+                               (df_tat_temp['Тональность']=='neutral') |
+                               (df_tat_temp['Тональность']=='positive')].pivot_table(values='Тест', index='Тональность', aggfunc='count').reset_index()
+        #df_pivot = df_tat_temp.pivot_table(values='Тест', index='Тональность', aggfunc='count').reset_index()
+        total = df_pivot['Тест'].sum()
+        pos_val = df_pivot[df_pivot['Тональность']=='positive']['Тест'].sum()
+        pos_perc = (pos_val / total) * 100
+        neu_val =df_pivot[df_pivot['Тональность']=='neutral']['Тест'].sum()
+        neu_perc = (neu_val / total) * 100
+        neg_val = df_pivot[df_pivot['Тональность']=='negative']['Тест'].sum()
+        neg_perc = (neg_val / total) * 100
+        result_indicator = neg_val / (pos_val + neg_val) * 100
+
+        if result_indicator <15:
+            result = 'Оценка: Положительное отношение туристов'
+            result_style['color'] = 'white'
+        elif (result_indicator >=15) and (result_indicator<50):
+            result = 'Оценка: Значительная доля негативных отзывов, возможны зоны роста'
+            result_style['color'] = 'yellow'
+        elif result_indicator >= 50:
+            result = 'Оценка: Критическая доля негативных отзывов, существуют проблемы, которые необходимо оперативно решать'
+            result_style['color'] = 'rgb(255, 99, 71)'
+        else:
+            result = 'Оценка: Положительное отношение туристов'
+            result_style['color'] = 'white'
+
+        fig = px.pie(df_pivot,
+                     values='Тест',
+                     names='Тональность',
+                     hole=.7,
+                     color='Тональность',
+                     color_discrete_map={'positive':'rgb(144, 238, 144)',
+                                         'neutral':'rgb(220, 220, 220)',
+                                         'negative':'rgb(255, 99, 71)'}
+                     )
     else:
-        result = 'Оценка: Положительное отношение туристов'
-        result_style['color'] = 'white'
+        themes_temp = themes_count
+        if cluster:
+            themes_temp = themes_temp[themes_temp['Num_Cluster'].isin(cluster)]
+        if date:
+            themes_temp = themes_temp[themes_temp['Год_месяц'].isin(date)]
+        if theme:
+            themes_temp = themes_temp[themes_temp['Тема'].isin(theme)]
+        total = themes_temp['Кол-во'].sum()
+        themes_temp = themes_temp[(themes_temp['Тональность'] != 'speech') & (themes_temp['Тональность'] != 'skip')]
+        #cluster_pivot = themes_temp.pivot_table(index=['Тема','Тональность'], values='Кол-во', aggfunc='sum').reset_index()
+        pos_val = themes_temp[themes_temp['Тональность'] == 'positive']['Кол-во'].sum()
+        pos_perc = (pos_val / total) * 100
+        neu_val = themes_temp[themes_temp['Тональность'] == 'neutral']['Кол-во'].sum()
+        neu_perc = (neu_val / total) * 100
+        neg_val = themes_temp[themes_temp['Тональность'] == 'negative']['Кол-во'].sum()
+        neg_perc = (neg_val / total) * 100
+        result_indicator = neg_val / (pos_val + neg_val) * 100
 
-    fig = px.pie(df_pivot, 
-                 values='Тест',
-                 names='Тональность', 
-                 hole=.7, 
-                 color='Тональность',
-                 color_discrete_map={'positive':'rgb(144, 238, 144)',
-                                     'neutral':'rgb(220, 220, 220)',
-                                     'negative':'rgb(255, 99, 71)'}
-                 )
+        if result_indicator < 15:
+            result = 'Оценка: Положительное отношение туристов'
+            result_style['color'] = 'white'
+        elif (result_indicator >= 15) and (result_indicator < 50):
+            result = 'Оценка: Значительная доля негативных отзывов, возможны зоны роста'
+            result_style['color'] = 'yellow'
+        elif result_indicator >= 50:
+            result = 'Оценка: Критическая доля негативных отзывов, существуют проблемы, которые необходимо оперативно решать'
+            result_style['color'] = 'rgb(255, 99, 71)'
+        else:
+            result = 'Оценка: Положительное отношение туристов'
+            result_style['color'] = 'white'
+
+        fig = px.pie(themes_temp,
+                     values='Кол-во',
+                     names='Тональность',
+                     hole=.7,
+                     color='Тональность',
+                     color_discrete_map={'positive': 'rgb(144, 238, 144)',
+                                         'neutral': 'rgb(220, 220, 220)',
+                                         'negative': 'rgb(255, 99, 71)'}
+                     )
     fig.update_traces(hovertemplate=None, textposition='outside') 
     fig.update_yaxes(showgrid=False, visible=False)
     fig.update_xaxes(showgrid=False, visible=True)
