@@ -12,11 +12,6 @@
          font-size: small;
          text-transform: capitalize;
 }
-         
-.card-delta {
-        font-size: small;
-        padding-left:5px;
-}
 
 .radio-group .form-check {
   padding-left: 0;
@@ -76,53 +71,66 @@
     align-items: center;
 }
 
+.mid-card-value-container {
+    display:grid;
+    align-items: center;
+}
+
 .big-card-value {
-    font-size:xxx-large;
+    font-size:48px;
 }
 
 .medium-card-value {
-     font-size:xx-large;
+     font-size:40px;
 }
 
 .card-value-label {
-    font-size:large;
+    font-size:22px;
     padding-left:1rem;
 }
 .card-delta-container {
+    display:flex;
+}
+.big-card-delta-container {
     display:flex;
     padding-left:10px;
 }
 .card-describe {
     opacity:0.7;
+    font-size:18px;
 }
 .card-delta {
     opacity:0.7;
+    font-size:18px;
+    padding-left:5px;
 }
 .inplace-col-container {
     border-left: 0.1rem solid;
     border-left-color: rgb(255 255 255 / 40%);
-    padding-left: 15px;
+    padding-left: 10px;
 }
 .people-postprogress-container {
     display:grid;
     grid-template-columns: 50% 50%; 
-    font-size: small;  
+    font-size: 15px;
 }
 .tour-card-grid-container {
     display:grid;
     grid-template-columns: 46% 46%;
     grid-column-gap: 4%;
-    padding-top:10px;
 }
 .tourfirm-progress-container {
     display:grid;
-    grid-template-columns: 40% 40% 46px;
+    grid-template-columns: 41% 40% 17%;
     grid-column-gap: 10px;
     white-space: break-spaces;
     align-items: center;  
-    font-size: small; 
+    font-size: 15px;
     justify-items: flex-end;
-    height: 5vh;
+    height: 4.2vh;
+}
+.tourfirm-abs-value {
+    justify-self: start;
 }
 .tour-label-progress {
     text-align: right;
@@ -143,11 +151,11 @@
 } 
 .avg-days-plot {
     margin-top:2vh;
-    height:11vh;
+    height:13.5vh;
 
 }
 .people-plot { 
-    height:7vh;
+    height:9.2vh;
 }
 .profit-inplace-plot {
     height:14vh;
@@ -181,7 +189,8 @@
     --ag-odd-row-background-color: #fdfdfd00!important;
     --ag-row-hover-color: #0dcaf02e!important;
     --ag-foreground-color: #fff!important;
-    
+
+    --ag-font-size: 14px!important;
 }
 .ag-filter *{
    background-color: #fff!important;
@@ -252,8 +261,8 @@
 }
 .pie-container {
     display:grid;
-    grid-template-columns: 40% 60%;
-    height:14vh;
+    grid-template-columns: 35% 65%;
+    height:13vh;
 }
 .pie-label-container {
     display:grid;
@@ -262,8 +271,9 @@
     align-content: center;
     align-items: center;
     justify-items: end;
-    row-gap: 10px;
+    row-gap: 3px;
     column-gap: 10px;
+    font-size:18px;
 }
 .dash-devider {
     opacity:40%;
