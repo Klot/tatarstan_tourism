@@ -578,19 +578,23 @@ def pie_upadte(famous, result_style, theme, cluster, date):
         if date:
             df_tat_temp = df_tat_temp[df_tat_temp['Год_месяц'].isin(date)]
 
-        df_pivot = df_tat_temp[(df_tat_temp['Тональность']=='negative') |
-                               (df_tat_temp['Тональность']=='neutral') |
-                               (df_tat_temp['Тональность']=='positive')].pivot_table(values='Тест', index='Тональность', aggfunc='count').reset_index()
-        #df_pivot = df_tat_temp.pivot_table(values='Тест', index='Тональность', aggfunc='count').reset_index()
-        total = df_pivot['Тест'].sum()
-        pos_val = df_pivot[df_pivot['Тональность']=='positive']['Тест'].sum()
+        df_pivot_all = df_tat_temp.pivot_table(values='Тема', index='Тональность', aggfunc='count').reset_index()
+        total = df_pivot_all['Тема'].sum()
+        #df_pivot = df_tat_temp[(df_tat_temp['Тональность']=='negative') |
+         #                      (df_tat_temp['Тональность']=='neutral') |
+          #                     (df_tat_temp['Тональность']=='positive')].pivot_table(values='Тест', index='Тональность', aggfunc='count').reset_index()
+        df_pivot = df_tat_temp.pivot_table(values='Тема', index='Тональность', aggfunc='count').reset_index()
+
+        pos_val = df_pivot[df_pivot['Тональность']=='positive']['Тема'].sum()
         pos_perc = (pos_val / total) * 100
-        neu_val =df_pivot[df_pivot['Тональность']=='neutral']['Тест'].sum()
+        neu_val =df_pivot[df_pivot['Тональность']=='neutral']['Тема'].sum()
         neu_perc = (neu_val / total) * 100
-        neg_val = df_pivot[df_pivot['Тональность']=='negative']['Тест'].sum()
+        neg_val = df_pivot[df_pivot['Тональность']=='negative']['Тема'].sum()
         neg_perc = (neg_val / total) * 100
         result_indicator = neg_val / (pos_val + neg_val) * 100
-
+        df_pivot = df_pivot[(df_pivot['Тональность'] == 'negative') |
+                              (df_pivot['Тональность']=='neutral') |
+                             (df_pivot['Тональность']=='positive')]
         if result_indicator <15:
             result = 'Оценка: Положительное отношение туристов'
             result_style['color'] = 'white'
@@ -605,7 +609,7 @@ def pie_upadte(famous, result_style, theme, cluster, date):
             result_style['color'] = 'white'
 
         fig = px.pie(df_pivot,
-                     values='Тест',
+                     values='Тема',
                      names='Тональность',
                      hole=.7,
                      color='Тональность',
